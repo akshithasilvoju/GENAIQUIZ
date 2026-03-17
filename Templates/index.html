@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>GenQuiz</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:linear-gradient(90deg,#6d5a8d,#9c88b6);
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+margin:0;
+}
+
+.container{
+background:#0b0b0b;
+padding:30px;
+border-radius:20px;
+width:550px;
+color:white;
+}
+
+h2{
+text-align:center;
+margin-bottom:20px;
+}
+
+input,select{
+width:100%;
+padding:10px;
+margin:10px 0;
+border:none;
+border-radius:5px;
+}
+
+button{
+width:100%;
+padding:14px;
+background:linear-gradient(90deg,#a020f0,#7b2cff);
+border:none;
+color:white;
+font-size:16px;
+border-radius:10px;
+cursor:pointer;
+margin-top:20px;
+}
+
+.question{
+font-size:20px;
+text-align:center;
+margin-top:20px;
+}
+
+.options{
+margin-top:25px;
+padding-left:40px;
+}
+
+.option{
+display:flex;
+align-items:center;
+gap:10px;
+margin:10px 0;
+font-size:18px;
+}
+
+.option input{
+width:auto;
+transform:scale(1.2);
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>GenQuiz</h2>
+
+<div id="setup">
+
+<input id="topic" placeholder="Quiz Topic">
+
+<select id="difficulty">
+<option>Easy</option>
+<option>Medium</option>
+<option>Hard</option>
+</select>
+
+<input id="num" type="number" value="3">
+
+<button type="button" onclick="generateQuiz()">Generate Quiz</button>
+
+</div>
+
+<div id="quiz"></div>
+
+</div>
+
+<script>
+
+let questions=[]
+let current=0
+let score=0
+
+async function generateQuiz(){
+
+let topic=document.getElementById("topic").value
+let difficulty=document.getElementById("difficulty").value
+let num=document.getElementById("num").value
+
+// show loading message
+document.getElementById("quiz").innerHTML=
+"<h3 style='text-align:center'>Generating Quiz... Please wait ⏳</h3>"
+
+let response=await fetch("/generateQuiz",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+topic:topic,
+difficulty:difficulty,
+num:num
+})
+})
+
+questions=await response.json()
+
+document.getElementById("setup").style.display="none"
+
+current=0
+score=0
+
+showQuestion()
+
+}
+
+function showQuestion(){
+
+if(current>=questions.length){
+
+document.getElementById("quiz").innerHTML=
+`
+<h3 style="text-align:center">Your Score: ${score} / ${questions.length}</h3>
+<button type="button" onclick="resetQuiz()">Complete Quiz</button>
+`
+
+return
+}
+
+let q=questions[current]
+
+let html="<div class='question'><h3>"+q.question+"</h3></div>"
+html+="<div class='options'>"
+
+q.options.forEach(opt=>{
+
+html+=`
+<label class="option">
+<input type="radio" name="opt" value="${opt}">
+<span>${opt}</span>
+</label>
+`
+
+})
+
+html+="</div>"
+html+=`<button type="button" onclick="nextQuestion()">Next</button>`
+
+document.getElementById("quiz").innerHTML=html
+
+}
+
+function nextQuestion(){
+
+let selected=document.querySelector('input[name="opt"]:checked')
+
+if(!selected){
+alert("Please select an option")
+return
+}
+
+if(selected.value==questions[current].answer){
+score++
+}
+
+current++
+
+showQuestion()
+
+}
+
+function resetQuiz(){
+
+document.getElementById("quiz").innerHTML=""
+document.getElementById("setup").style.display="block"
+
+}
+
+</script>
+
+</body>
+</html>
