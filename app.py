@@ -6,7 +6,8 @@ import os
 
 app = Flask(__name__)
 
-API_KEY = "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"
+
+API_KEY = os.getenv("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")
 
 @app.route("/")
 def home():
