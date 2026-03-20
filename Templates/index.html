@@ -114,7 +114,6 @@ let topic=document.getElementById("topic").value
 let difficulty=document.getElementById("difficulty").value
 let num=document.getElementById("num").value
 
-// show loading message
 document.getElementById("quiz").innerHTML=
 "<h3 style='text-align:center'>Generating Quiz... Please wait ⏳</h3>"
 
@@ -154,7 +153,9 @@ return
 
 let q=questions[current]
 
-let html="<div class='question'><h3>"+q.question+"</h3></div>"
+/* ✅ QUESTION NUMBER ADDED HERE */
+let html="<div class='question'><h3>Q" + (current+1) + ". " + q.question + "</h3></div>"
+
 html+="<div class='options'>"
 
 q.options.forEach(opt=>{
