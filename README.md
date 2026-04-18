@@ -57,7 +57,3 @@ GenQuiz
 * User login system
 * Quiz history
 * Leaderboard
-
-## Author
-
-GenQuiz Project – BTech Generative AI Mini Project
